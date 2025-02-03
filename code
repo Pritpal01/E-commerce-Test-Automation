@@ -1,0 +1,51 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+public class EcommerceTest {
+    WebDriver driver;
+
+    @BeforeClass
+    public void setup() {
+        System.setProperty("webdriver.chrome.driver", "C:/path/to/chromedriver.exe");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+    }
+
+    @Test(priority = 1)
+    public void testLogin() throws InterruptedException {
+        driver.get("https://www.demoblaze.com/");
+        driver.findElement(By.id("login2")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.id("loginusername")).sendKeys("testuser");
+        driver.findElement(By.id("loginpassword")).sendKeys("testpassword");
+        driver.findElement(By.xpath("//button[text()='Log in']")).click();
+        Thread.sleep(3000);
+        Assert.assertTrue(driver.getPageSource().contains("Welcome testuser"), "Login failed!");
+    }
+
+    @Test(priority = 2)
+    public void testSearchProduct() {
+        driver.get("https://www.demoblaze.com/");
+        WebElement productList = driver.findElement(By.id("tbodyid"));
+        Assert.assertTrue(productList.isDisplayed(), "Product list not found!");
+    }
+
+    @Test(priority = 3)
+    public void testAddToCart() throws InterruptedException {
+        driver.get("https://www.demoblaze.com/");
+        driver.findElement(By.linkText("Samsung galaxy s6")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.linkText("Add to cart")).click();
+        Thread.sleep(2000);
+        Assert.assertTrue(driver.getPageSource().contains("Product added"), "Add to cart failed!");
+    }
+
+    @AfterClass
+    public void tearDown() {
+        driver.quit();
+    }
+}
